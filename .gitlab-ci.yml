@@ -1,0 +1,29 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+stages:
+  - test
+  - release
+
+include:
+  - component: gitlab.com/thelabnyc/thelab-ci-components/review@0.8.3
+  - component: gitlab.com/thelabnyc/thelab-ci-components/precommit@0.8.3
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-gitlab-release@0.8.3
+  - component: gitlab.com/thelabnyc/thelab-ci-components/publish-to-pypi@0.8.3
+
+test:
+  stage: test
+  image: "registry.gitlab.com/thelabnyc/python:${IMAGE}"
+  script:
+    - uv sync --all-extras
+    - uv run tox
+  parallel:
+    matrix:
+      - IMAGE: "3.12"
+        TOX_SKIP_ENV: "^(?!py312-)"
+      - IMAGE: "3.13"
+        TOX_SKIP_ENV: "^(?!py313-)"
+      - IMAGE: "3.14"
+        TOX_SKIP_ENV: "^(?!py314-)"

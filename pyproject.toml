@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "telepath-stubs"
+version = "0.3.0"
+description = "PEP 561 type stubs for telepath"
+readme = "README.md"
+license = { text = "ISC" }
+dependencies = [
+    "telepath>=0.3,<1.0",
+    "django-stubs>=5.2.0",
+]
+requires-python = ">=3.12"
+
+[[project.authors]]
+name = "thelab"
+email = "thelabdev@thelab.co"
+
+[project.urls]
+Homepage = "https://gitlab.com/thelabnyc/stubs/telepath-stubs"
+Repository = "https://gitlab.com/thelabnyc/stubs/telepath-stubs"
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "django-stubs>=5.2.9",
+    "pytest>=8.0",
+    "pytest-mypy-plugins>=3.0",
+    "tox>=4.49.0",
+    "tox-uv>=1.33.1",
+    "ruff>=0.15.5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["telepath-stubs"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "PYI"]
+
+[tool.ruff.lint.isort]
+from-first = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+annotated_tag = true
+gpg_sign = true
+tag_format = "v$version"
+update_changelog_on_bump = true
+changelog_merge_prerelease = true
+version_provider = "pep621"
+version_scheme = "pep440"
+version_files = ["pyproject.toml:version"]

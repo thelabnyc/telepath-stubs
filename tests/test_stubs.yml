@@ -1,0 +1,105 @@
+- case: adapter_subclass
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from telepath import Adapter, BaseAdapter, register, AdapterRegistry, JSContextBase
+
+    class MyObj:
+        name: str
+
+    class MyAdapter(Adapter):
+        js_constructor = "myapp.MyObj"
+
+        def js_args(self, obj: MyObj) -> list[object]:
+            return [obj.name]
+
+    adapter = MyAdapter()
+    registry = AdapterRegistry()
+    registry.register(adapter, MyObj)
+
+- case: auto_adapter_decorator
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from telepath import register
+
+    @register
+    class MyWidget:
+        def telepath_pack(self, context: object) -> tuple[str, list[object]]:
+            return ("myapp.MyWidget", [])
+
+- case: js_context_pack
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from typing import Any
+    from telepath import JSContext
+
+    ctx = JSContext()
+    result: Any = ctx.pack({"key": "value"})
+    reveal_type(ctx.media)  # N: Revealed type is "django.forms.widgets.Media"
+
+- case: registry_creation
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from telepath import AdapterRegistry
+
+    reg = AdapterRegistry()
+    reg_custom = AdapterRegistry(telepath_js_path="custom/telepath.js")
+    ctx_cls = reg.js_context_class
+    ctx = ctx_cls()
+    result = ctx.pack(42)
+
+- case: node_types
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from telepath import ValueNode, StringNode, ListNode, DictNode, ObjectNode, Node
+
+    vn = ValueNode(42)
+    sn = StringNode("hello")
+    ln = ListNode([vn, sn])
+    dn = DictNode({"key": vn})
+    on = ObjectNode("myapp.Thing", [vn])
+
+    result = on.emit()
+
+- case: base_adapter_build_node
+  mypy_config: |
+    [mypy]
+    plugins = mypy_django_plugin.main
+
+    [mypy.plugins.django-stubs]
+    django_settings_module = telepath.test_settings
+  main: |
+    from telepath import BaseAdapter, ValueContext, JSContextBase, AdapterRegistry, Node
+
+    class MyContext(JSContextBase):
+        registry = AdapterRegistry()
+        telepath_js_path = "telepath/js/telepath.js"
+
+    parent = MyContext()
+    vc = ValueContext(parent)
+    adapter = BaseAdapter()
+    node: Node = adapter.build_node(42, vc)

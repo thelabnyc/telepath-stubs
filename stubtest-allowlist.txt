@@ -1,0 +1,12 @@
+# js_args is not defined on Adapter at runtime; subclasses must define it.
+# We include it in the stub so that subclass authors get type guidance.
+telepath.Adapter.js_args
+
+# Re-exported from Django; mismatches are due to django-stubs definitions
+# differing from the Django runtime (not our problem to fix).
+telepath.Promise.*
+telepath.cached_property.*
+
+# Internal test modules, not part of the public API.
+telepath.test_settings
+telepath.tests
