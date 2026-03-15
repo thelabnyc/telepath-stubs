@@ -15,15 +15,7 @@ include:
 
 test:
   stage: test
-  image: "registry.gitlab.com/thelabnyc/python:${IMAGE}"
+  image: "registry.gitlab.com/thelabnyc/python:3.14"
   script:
     - uv sync --all-extras
     - uv run tox
-  parallel:
-    matrix:
-      - IMAGE: "3.12"
-        TOX_SKIP_ENV: "^(?!py312-)"
-      - IMAGE: "3.13"
-        TOX_SKIP_ENV: "^(?!py313-)"
-      - IMAGE: "3.14"
-        TOX_SKIP_ENV: "^(?!py314-)"
