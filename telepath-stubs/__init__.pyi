@@ -3,22 +3,15 @@ from typing import Any, TypeVar, overload
 
 from django import forms as forms
 from django.forms import MediaDefiningClass as MediaDefiningClass
-from django.utils.functional import Promise as Promise, cached_property as cached_property
+from django.utils.functional import Promise as Promise
+from django.utils.functional import cached_property as cached_property
 
 _T = TypeVar("_T")
 
 # Recursive JSON-serializable type produced by Node.emit()
-_JSONValue = (
-    str
-    | int
-    | float
-    | bool
-    | None
-    | list[_JSONValue]
-    | dict[str, _JSONValue]
-)
+type _JSONValue = str | int | float | bool | None | list[_JSONValue] | dict[str, _JSONValue]
 
-_PrimitiveValue = int | float | bool | None
+type _PrimitiveValue = int | float | bool | None
 
 DICT_RESERVED_KEYS: list[str]
 STRING_REF_MIN_LENGTH: int
