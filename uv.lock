@@ -700,7 +700,7 @@ wheels = [
 
 [[package]]
 name = "telepath-stubs"
-version = "0.3.0"
+version = "0.3.0a1"
 source = { editable = "." }
 dependencies = [
     { name = "django-stubs" },
